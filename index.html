@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Tip Calculator with Burger</title>
+    <style>
+        
+        body {
+            background-color: #c5e4e7;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .main-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            width: 700px;
+            gap: 30px;
+            position: relative; 
+        }
+
+        .left-side, .right-side {
+            flex: 1;
+        }
+
+        .right-side {
+            background-color: #00474b;
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            background: #f3f9fa;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button.tip-btn {
+            background: #00474b;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        button.tip-btn:hover {
+            background: #26c2ad;
+            color: #00474b;
+        }
+
+        .result-text {
+            font-size: 32px;
+            color: #26c2ad;
+            font-weight: bold;
+        }
+
+        .reset-btn {
+            background: #26c2ad;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        
+        nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: #00474b;
+            color: white;
+            padding: 50px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-active {
+            display: flex;
+        }
+
+        .burger-buttons {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+        }
+
+        .btn-burger, .btn-x {
+            background: white;
+            border: 2px solid #00474b;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .current {
+            display: none; 
+        }
+
+        @media (max-width: 750px) {
+            .main-card {
+                flex-direction: column;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-menu">
+        <h5>Home</h5>
+        <h5>Contacts</h5>
+        <h5>About</h5>
+    </nav>
+
+    <div class="burger-buttons">
+        <button class="btn-burger">
+            <img src="https://img.icons8.com/sf-regular/1200/menu.jpg" width="30" height="25">
+        </button>
+        <button class="btn-x current" style="width: 40px; height: 35px; font-weight: bold; font-size: 20px;">X</button>
+    </div>
+
+    <div class="main-card">
+        <div class="left-side">
+            <label>Bill</label>
+            <input type="number" id="billInput" placeholder="0">
+
+            <label>Select Tip %</label>
+            <div class="btn-grid">
+                <button class="tip-btn">5%</button>
+                <button class="tip-btn">10%</button>
+                <button class="tip-btn">15%</button>
+                <button class="tip-btn">25%</button>
+            </div>
+
+            <label>Number of People</label>
+            <input type="number" id="peopleInput" placeholder="1">
+        </div>
+
+        <div class="right-side" id="result-container">
+            <p style="text-align: center;">Choose Tip % to see results</p>
+            <button class="reset-btn" onclick="location.reload()">RESET</button>
+        </div>
+    </div>
+
+    <script>
+        
+        const btnBurger = document.querySelector(".btn-burger");
+        const btnX = document.querySelector(".btn-x");
+        const nav = document.querySelector(".nav-menu");
+
+        btnBurger.addEventListener("click", function () {
+            btnBurger.classList.toggle("current");
+            btnX.classList.toggle("current");
+            nav.classList.toggle("nav-active");
+        });
+
+        btnX.addEventListener("click", function () {
+            btnBurger.classList.toggle("current");
+            btnX.classList.toggle("current");
+            nav.classList.toggle("nav-active");
+        });
+
+       
+        const buttons = document.querySelectorAll(".tip-btn");
+        const billInput = document.getElementById("billInput");
+        const peopleInput = document.getElementById("peopleInput");
+        const container = document.getElementById("result-container");
+
+        buttons.forEach(function(btn) {
+            btn.addEventListener("click", function() {
+                let bill = parseFloat(billInput.value);
+                let people = parseInt(peopleInput.value);
+                let percent = parseInt(btn.innerText); 
+
+                if (bill > 0 && people > 0) {
+                    let tipTotal = (bill * percent) / 100;
+                    let tipPerPerson = tipTotal / people;
+                    let totalPerPerson = (bill + tipTotal) / people;
+
+                    container.innerHTML = "";
+                    let resultDiv = document.createElement("div");
+
+                    resultDiv.innerHTML = `
+                        <div style="margin-bottom: 20px">
+                            <small style="color: #7f9c9f">Tip Amount / person</small>
+                            <div class="result-text">$${tipPerPerson.toFixed(2)}</div>
+                        </div>
+                        <div style="margin-bottom: 20px">
+                            <small style="color: #7f9c9f">Total / person</small>
+                            <div class="result-text">$${totalPerPerson.toFixed(2)}</div>
+                        </div>
+                        <button class="reset-btn" onclick="location.reload()">RESET</button>
+                    `;
+                    container.appendChild(resultDiv);
+                } else {
+                    alert("Введите корректные данные!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
